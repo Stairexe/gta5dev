@@ -42,6 +42,8 @@ export interface ExportOptions extends PlacementOptions {
   movingParts: THREE.Object3D[];
   animations: AnimationSource[];
   materialOverrides: Map<string, MaterialOverride>;
+  /** Longest texture side sent to the engine (GTA streams textures; 1024-2048 is typical for props). */
+  maxTextureSize?: number;
 }
 
 /** Something that can pose the scene at time t (seconds). */
@@ -199,14 +201,14 @@ export async function buildPropSpec(root: THREE.Object3D, opts: ExportOptions): 
     const spec: MaterialSpec = { name: m.name || base, shader: 'auto', alpha: 'opaque', emissiveMultiplier: ov?.emissiveMultiplier ?? 1 };
     const useEmissive = ov?.shader === 'emissive' || (ov?.shader !== 'default' && !!std.emissiveMap && !std.map);
     const diffuseTex = useEmissive && std.emissiveMap ? std.emissiveMap : std.map;
-    if (diffuseTex) spec.diffuse = await addTexture(diffuseTex, 'diffuse', base, () => texturePng(diffuseTex));
+    if (diffuseTex) spec.diffuse = await addTexture(diffuseTex, 'diffuse', base, () => texturePng(diffuseTex, opts.maxTextureSize));
     if (!spec.diffuse) {
       const c = (useEmissive ? std.emissive : std.color) ?? new THREE.Color(0.8, 0.8, 0.8);
       const lin = c.clone().convertLinearToSRGB();
       spec.color = [Math.round(lin.r * 255), Math.round(lin.g * 255), Math.round(lin.b * 255), Math.round((std.opacity ?? 1) * 255)];
     }
-    if (!useEmissive && std.normalMap) spec.normal = await addTexture(std.normalMap, 'normal', base, () => normalPng(std.normalMap!));
-    if (!useEmissive && std.roughnessMap) spec.specular = await addTexture(std.roughnessMap, 'specular', base, () => specFromRoughnessPng(std.roughnessMap!, std.roughness ?? 1));
+    if (!useEmissive && std.normalMap) spec.normal = await addTexture(std.normalMap, 'normal', base, () => normalPng(std.normalMap!, opts.maxTextureSize));
+    if (!useEmissive && std.roughnessMap) spec.specular = await addTexture(std.roughnessMap, 'specular', base, () => specFromRoughnessPng(std.roughnessMap!, std.roughness ?? 1, opts.maxTextureSize));
     spec.shader = useEmissive ? 'emissive' : 'auto';
     const autoAlpha: AlphaMode = m.transparent && (m.opacity < 1 || !!std.map) ? 'blend' : m.alphaTest > 0 ? 'cutout' : 'opaque';
     spec.alpha = ov && ov.alpha !== 'auto' ? ov.alpha : autoAlpha;

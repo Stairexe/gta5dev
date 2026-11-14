@@ -1,10 +1,10 @@
 import { useRef, useState, type ReactNode } from 'react';
 import type { BuildReport } from '../lib/types';
 
-export function Section({ title, children, right }: { title: string; children: ReactNode; right?: ReactNode }) {
+export function Section({ title, children, right, step, id }: { title: string; children: ReactNode; right?: ReactNode; step?: number; id?: string }) {
   return (
-    <section className="section">
-      <header className="section-head"><h3>{title}</h3>{right}</header>
+    <section className="section" id={id}>
+      <header className="section-head"><h3>{step !== undefined && <span className="step-num">{step}</span>}{title}</h3>{right}</header>
       <div className="section-body">{children}</div>
     </section>
   );
@@ -59,5 +59,27 @@ export function ReportView({ report, error, fileName, onDownload }: { report?: B
         <ul className="report-checks">{report.checks.map((c, i) => <li key={i}>{c}</li>)}</ul>
       </details>
     </div>
+  );
+}
+
+export interface StepDef { id: string; label: string; done?: boolean; disabled?: boolean }
+
+/** Numbered workflow strip at the top of a tool panel; clicking a step scrolls to its section. */
+export function Steps({ steps }: { steps: StepDef[] }) {
+  const firstOpen = steps.findIndex(s => !s.done && !s.disabled);
+  return (
+    <nav className="steps" aria-label="Workflow">
+      {steps.map((s, i) => (
+        <button
+          key={s.id}
+          className={`step ${s.done ? 'step-done' : ''} ${i === firstOpen ? 'step-now' : ''}`}
+          disabled={s.disabled}
+          onClick={() => document.getElementById(s.id)?.scrollIntoView({ behavior: 'smooth', block: 'start' })}
+        >
+          <span className="step-dot">{s.done ? '✓' : i + 1}</span>
+          <span className="step-label">{s.label}</span>
+        </button>
+      ))}
+    </nav>
   );
 }

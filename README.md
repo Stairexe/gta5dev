@@ -9,6 +9,8 @@ Browser tools that turn 3D models into ready-to-install GTA V / FiveM resources.
 | **Prop Studio** | `.glb` | `stream/<name>.ydr` `.ytd` `.ytyp`, `fxmanifest.lua`, `/name` test command |
 | **Prop Animator** | `.glb` with separate parts (and optionally its own animations) | the above plus a skeleton and `stream/<name>.ycd`; archetype flags *Has Anim* + *Auto Start Anim* |
 | **YDD → Addon Ped** | rigged ped `.ydd` (+ `.ytd`, `.yft` optional) | `<name>.ydd` (head / uppr / lowr / feet), `.ytd`, `.yft`, `.ymt`, `peds.meta`, `fxmanifest.lua` |
+| **Image → 3D** | 1-4 reference images | textured `.glb` from your own GPU (TRELLIS.2 / TRELLIS) or Meshy / Tripo, sent straight into Prop Studio or the Animator. Needs the [generation server](gen-server/README.md). |
+| **Remesh & Optimize** (in Prop Studio) | any loaded model | welded, simplified mesh at a triangle budget; texture size cap |
 
 ## How it works
 
@@ -74,6 +76,16 @@ cd engine && dotnet test
 
 `tools/fixtures/make_chest_glb.py` writes a small textured chest with a hinged lid and an `open`
 animation, for trying the prop tools without any third-party assets.
+
+## AI generation: what it costs
+
+| Option | Cost per textured model | Notes |
+|---|---|---|
+| TRELLIS.2 on your GPU | electricity | needs NVIDIA 24 GB+, Linux/WSL2; MIT licence |
+| TRELLIS v1 on your GPU | electricity | 16 GB+, multi-view |
+| Meshy API (`meshy-7.1`) | 30 credits ≈ $0.38-0.60 (+5 for ultra geometry) | gtax.dev sells this as "Prism" |
+| Tripo API | $0.30 (+$0.10 HD texture, +$0.20 HD geometry) | gtax.dev sells this as "Atlas" |
+| gtax.dev resale | 140-245 tokens ≈ $1.40-4.90 | their token packs cost $8.33-19.90 per 1,000 |
 
 ## Status
 

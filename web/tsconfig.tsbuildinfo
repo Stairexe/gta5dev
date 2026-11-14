@@ -1,1 +1,0 @@
-{"root":["./src/App.tsx","./src/main.tsx","./src/animator/model.ts","./src/components/ui.tsx","./src/lib/api.ts","./src/lib/engine.ts","./src/lib/exporter.ts","./src/lib/simplify.ts","./src/lib/textures.ts","./src/lib/types.ts","./src/pages/PedTool.tsx","./src/pages/PropStudio.tsx","./src/three/Viewport.tsx","./src/three/loadModel.ts"],"version":"5.6.3"}

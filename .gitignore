@@ -8,3 +8,7 @@ engine/GtaForge.Engine/wwwroot/
 TestResults/
 build/
 web/public/engine/
+__pycache__/
+.venv/
+.pytest_cache/
+*.tsbuildinfo

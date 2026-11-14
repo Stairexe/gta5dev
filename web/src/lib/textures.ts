@@ -1,6 +1,6 @@
 import * as THREE from 'three';
 
-const MAX_UPLOAD_SIZE = 2048;
+export const DEFAULT_MAX_TEXTURE = 2048;
 
 type ImageLike = { width: number; height: number };
 
@@ -12,10 +12,10 @@ function drawable(img: unknown): CanvasImageSource & ImageLike | null {
   return null;
 }
 
-function canvasFor(tex: THREE.Texture): HTMLCanvasElement | null {
+function canvasFor(tex: THREE.Texture, maxSize = DEFAULT_MAX_TEXTURE): HTMLCanvasElement | null {
   const img = drawable(tex.image);
   if (!img || !img.width || !img.height) return null;
-  const scale = Math.min(1, MAX_UPLOAD_SIZE / Math.max(img.width, img.height));
+  const scale = Math.min(1, maxSize / Math.max(img.width, img.height));
   const c = document.createElement('canvas');
   c.width = Math.max(1, Math.round(img.width * scale));
   c.height = Math.max(1, Math.round(img.height * scale));
@@ -29,16 +29,16 @@ function toBlob(c: HTMLCanvasElement): Promise<Blob> {
 }
 
 /** Plain PNG of a texture (diffuse / emissive). */
-export async function texturePng(tex: THREE.Texture): Promise<Blob | null> {
-  const c = canvasFor(tex);
+export async function texturePng(tex: THREE.Texture, maxSize?: number): Promise<Blob | null> {
+  const c = canvasFor(tex, maxSize);
   return c ? toBlob(c) : null;
 }
 
 /**
  * Normal map converted from glTF (OpenGL, +Y) to GTA (DirectX, -Y) by inverting green.
  */
-export async function normalPng(tex: THREE.Texture): Promise<Blob | null> {
-  const c = canvasFor(tex);
+export async function normalPng(tex: THREE.Texture, maxSize?: number): Promise<Blob | null> {
+  const c = canvasFor(tex, maxSize);
   if (!c) return null;
   const ctx = c.getContext('2d')!;
   const d = ctx.getImageData(0, 0, c.width, c.height);
@@ -51,8 +51,8 @@ export async function normalPng(tex: THREE.Texture): Promise<Blob | null> {
  * Specular map from a glTF metallic-roughness texture: shininess = 1 - roughness (green channel).
  * GTA reads intensity from red (specMapIntMask = 1,0,0), so the value goes into every channel.
  */
-export async function specFromRoughnessPng(tex: THREE.Texture, roughnessFactor: number): Promise<Blob | null> {
-  const c = canvasFor(tex);
+export async function specFromRoughnessPng(tex: THREE.Texture, roughnessFactor: number, maxSize?: number): Promise<Blob | null> {
+  const c = canvasFor(tex, maxSize);
   if (!c) return null;
   const ctx = c.getContext('2d')!;
   const d = ctx.getImageData(0, 0, c.width, c.height);

@@ -3,7 +3,7 @@ import * as THREE from 'three';
 import { Viewport, type ViewportApi } from '../three/Viewport';
 import { buildPed, download, inspect, type BuildResult, type Preview } from '../lib/api';
 import { safeName } from '../lib/textures';
-import { DropZone, Field, ReportView, Section } from '../components/ui';
+import { DropZone, Field, ReportView, Section, Steps } from '../components/ui';
 
 const PED_TYPES = ['CIVMALE', 'CIVFEMALE', 'COP', 'MEDIC', 'FIREMAN', 'ARMY', 'SWAT'];
 
@@ -101,7 +101,12 @@ export function PedTool() {
   return (
     <div className="tool">
       <aside className="panel">
-        <Section title="Ped files">
+        <Steps steps={[
+          { id: 'ped-files', label: 'Files', done: !!preview },
+          { id: 'ped-setup', label: 'Setup', disabled: !ydd },
+          { id: 'ped-export', label: 'Export', done: !!result, disabled: !ydd },
+        ]} />
+        <Section title="Ped files" step={1} id="ped-files">
           <DropZone accept=".ydd,.ytd,.yft" multiple label="Drop .ydd (+ .ytd, .yft)" sub="A full body rigged to the GTA ped skeleton, or already split into parts" onFiles={onFiles} compact={!!ydd} />
           {fileRow('.ydd', ydd, () => { setYdd(null); setPreview(null); }, 'required: the body')}
           {fileRow('.ytd', ytd, () => setYtd(null), 'optional: textures (else embedded or grey)')}
@@ -119,7 +124,7 @@ export function PedTool() {
           )}
         </Section>
 
-        <Section title="Ped setup">
+        <Section title="Ped setup" step={2} id="ped-setup">
           <Field label="Spawn name" hint="The model name in scripts and peds.meta">
             <input value={name} onChange={e => setName(safeName(e.target.value, ''))} />
           </Field>
@@ -132,7 +137,7 @@ export function PedTool() {
           <label className="check"><input type="checkbox" checked={testCommand} onChange={e => setTestCommand(e.target.checked)} /> Add /{name || 'name'} command to become the ped</label>
         </Section>
 
-        <Section title="Export">
+        <Section title="Export" step={3} id="ped-export">
           <button className="btn btn-primary btn-wide" disabled={!ydd || busy || !name} onClick={build}>{busy ? 'Building…' : 'Build addon ped'}</button>
           <p className="muted small">Produces {name}.ydd (head / uppr / lowr / feet), .ytd, .yft, .ymt, peds.meta and an fxmanifest.</p>
           <ReportView report={result?.report} error={error} fileName={result?.fileName} onDownload={result ? () => download(result.blob, result.fileName) : undefined} />

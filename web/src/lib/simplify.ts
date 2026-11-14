@@ -1,11 +1,11 @@
-import { MeshoptSimplifier } from 'meshoptimizer';
+import { MeshoptSimplifier, type Flags } from 'meshoptimizer';
 
 /** Simplifies an indexed triangle list to roughly `ratio` of its triangles. Returns new indices into the same vertices. */
-export async function simplifyIndices(positions: Float32Array, indices: Uint32Array, ratio: number, maxError = 0.02): Promise<Uint32Array> {
+export async function simplifyIndices(positions: Float32Array, indices: Uint32Array, ratio: number, maxError = 0.02, flags: Flags[] = ['LockBorder']): Promise<Uint32Array> {
   await MeshoptSimplifier.ready;
   const target = Math.max(3, Math.floor((indices.length / 3) * ratio) * 3);
   if (target >= indices.length) return indices;
-  const [out] = MeshoptSimplifier.simplify(indices, positions, 3, target, maxError, ['LockBorder']);
+  const [out] = MeshoptSimplifier.simplify(indices, positions, 3, target, maxError, flags);
   return out.length >= 3 ? out : indices;
 }
 

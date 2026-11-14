@@ -8,7 +8,9 @@ import { buildPropSpec, exportTransform, rel, sceneStats, type MaterialOverride,
 import { buildProp, download, type BuildResult } from '../lib/api';
 import { COLLISION_MATERIALS, type AlphaMode, type CollisionMode, type ShaderChoice } from '../lib/types';
 import { safeName } from '../lib/textures';
-import { DropZone, Field, ReportView, Section } from '../components/ui';
+import { DropZone, Field, ReportView, Section, Steps } from '../components/ui';
+import { countTriangles, remesh, restoreOriginals } from '../lib/remesh';
+import { takeHandOff } from '../lib/handoff';
 import {
   applyClip, clipTargets, insertPivot, presetKeys, RestPose, toSource, upsertKey,
   type Clip, type GtaAxis, type PivotPoint, type Preset,
@@ -42,6 +44,16 @@ export function PropStudio({ mode }: { mode: Mode }) {
   const [testCommand, setTestCommand] = useState(true);
   const [overrides, setOverrides] = useState<Record<string, MaterialOverride>>({});
   const [stats, setStats] = useState<SceneStats | null>(null);
+  const [maxTexture, setMaxTexture] = useState(2048);
+  // remesh / optimize
+  const originals = useRef(new Map<THREE.Mesh, THREE.BufferGeometry>());
+  const [sourceTris, setSourceTris] = useState(0);
+  const [targetTris, setTargetTris] = useState(30000);
+  const [weld, setWeld] = useState(false);
+  const [aggressive, setAggressive] = useState(false);
+  const [remeshing, setRemeshing] = useState(false);
+  const [remeshNote, setRemeshNote] = useState<string | null>(null);
+  const [fromGenerator, setFromGenerator] = useState(false);
 
   // animator state
   const [parts, setParts] = useState<THREE.Object3D[]>([]);
@@ -131,6 +143,41 @@ export function PropStudio({ mode }: { mode: Mode }) {
   }, [selected, parts, gizmoMode]);
 
   // ---------------------------------------------------------------- loading
+  // A model handed over from another tool (Image -> 3D).
+  useEffect(() => {
+    if (!api.current) return;
+    const f = takeHandOff();
+    if (f) {
+      setFromGenerator(true);
+      setWeld(true);
+      void onFiles([f]);
+    }
+  }, [api.current]); // eslint-disable-line react-hooks/exhaustive-deps
+
+  const runRemesh = async () => {
+    const m = model.current;
+    if (!m) return;
+    setRemeshing(true);
+    try {
+      m.rest.restore();
+      const r = await remesh(m.root, { targetTriangles: targetTris, weld, aggressive }, originals.current);
+      setRemeshNote(`${r.before.toLocaleString()} → ${r.after.toLocaleString()} triangles`);
+      bump();
+      setStats(sceneStats(m.root, placement));
+    } finally {
+      setRemeshing(false);
+    }
+  };
+
+  const undoRemesh = () => {
+    const m = model.current;
+    if (!m) return;
+    restoreOriginals(originals.current);
+    setRemeshNote(null);
+    setStats(sceneStats(m.root, placement));
+    bump();
+  };
+
   const onFiles = async (files: File[]) => {
     const f = files.find(x => /\.(glb|gltf)$/i.test(x.name));
     if (!f) { setLoadError('Drop a .glb file (or a .gltf with embedded data).'); return; }
@@ -148,6 +195,11 @@ export function PropStudio({ mode }: { mode: Mode }) {
       v.content.add(holder);
       const mixer = new THREE.AnimationMixer(root);
       model.current = { root, gltf, fileName: f.name, holder, rest: new RestPose(root), mixer };
+      originals.current.clear();
+      const tris = countTriangles(root);
+      setSourceTris(tris);
+      setTargetTris(Math.min(tris, 30000));
+      setRemeshNote(null);
       setName(safeName(f.name.replace(/\.(glb|gltf)$/i, ''), 'my_prop'));
       setOverrides({});
       setParts([]);
@@ -270,6 +322,7 @@ export function PropStudio({ mode }: { mode: Mode }) {
       const { spec, files, warnings } = await buildPropSpec(m.root, {
         name, scale, rotationZ, pivot, lodDist, generateLods, collision, collisionMaterial, dynamic, testCommand,
         movingParts: isAnimator ? parts : [],
+        maxTextureSize: maxTexture,
         animations: animClips.map(c => toSource(c, m.mixer)),
         materialOverrides: ovMap,
       });
@@ -293,7 +346,15 @@ export function PropStudio({ mode }: { mode: Mode }) {
   return (
     <div className="tool">
       <aside className="panel">
-        <Section title="Model">
+        <Steps steps={[
+          { id: 'ps-model', label: 'Model', done: loaded },
+          { id: 'ps-optimize', label: 'Optimize', done: !!remeshNote, disabled: !loaded },
+          { id: 'ps-place', label: 'Placement', disabled: !loaded },
+          { id: 'ps-collision', label: 'Collision', disabled: !loaded },
+          ...(isAnimator ? [{ id: 'ps-parts', label: 'Animate', done: clips.length > 0, disabled: !loaded }] : []),
+          { id: 'ps-export', label: 'Export', done: !!result, disabled: !loaded },
+        ]} />
+        <Section title="Model" step={1} id="ps-model">
           <DropZone accept=".glb,.gltf" label={loaded ? `Replace ${model.current!.fileName}` : 'Drop a .glb model'} sub="Textures embedded. Any size, any orientation." onFiles={onFiles} compact={loaded} />
           {loading && <p className="muted">Loading…</p>}
           {loadError && <p className="error">{loadError}</p>}
@@ -305,12 +366,35 @@ export function PropStudio({ mode }: { mode: Mode }) {
             </dl>
           )}
           {sizeWarn && <p className="warn">{sizeWarn}</p>}
-          {stats && stats.triangles > 37000 && <p className="warn">High-poly for a prop ({stats.triangles.toLocaleString()} tris). LODs help, but consider simplifying.</p>}
+          {stats && stats.triangles > 37000 && <p className="warn">High-poly for a prop ({stats.triangles.toLocaleString()} tris). Use Optimize below.</p>}
+          {fromGenerator && <p className="muted small">Model from Image → 3D. Remesh it to a game budget below.</p>}
         </Section>
 
         {loaded && (
           <>
-            <Section title="Placement">
+            <Section title="Optimize mesh" step={2} id="ps-optimize" right={remeshNote && <span className="pill pill-ok">{remeshNote}</span>}>
+              <Field label={`Target: ${targetTris.toLocaleString()} triangles (from ${sourceTris.toLocaleString()})`} hint="Props in GTA are usually 2k-40k triangles. LODs are generated from this.">
+                <input type="range" min={Math.min(500, sourceTris)} max={Math.max(sourceTris, 1000)} step={Math.max(1, Math.round(sourceTris / 200))} value={targetTris} onChange={e => setTargetTris(+e.target.value)} />
+              </Field>
+              <div className="btn-group">
+                {[2000, 10000, 30000].filter(t => t < sourceTris).map(t => (
+                  <button key={t} className="btn btn-small" onClick={() => setTargetTris(t)}>{t / 1000}k</button>
+                ))}
+              </div>
+              <label className="check"><input type="checkbox" checked={weld} onChange={e => setWeld(e.target.checked)} /> Weld vertices first (AI / scanned models; smooths normals)</label>
+              <label className="check"><input type="checkbox" checked={aggressive} onChange={e => setAggressive(e.target.checked)} /> Aggressive (collapse seams, drop floating bits)</label>
+              <div className="row">
+                <button className="btn" onClick={runRemesh} disabled={remeshing || targetTris >= sourceTris}>{remeshing ? 'Remeshing…' : 'Remesh'}</button>
+                {remeshNote && <button className="btn btn-ghost" onClick={undoRemesh}>Undo</button>}
+              </div>
+              <Field label="Max texture size" hint="Larger textures stream slower and use more memory in game.">
+                <select value={maxTexture} onChange={e => setMaxTexture(+e.target.value)}>
+                  {[512, 1024, 2048].map(s => <option key={s} value={s}>{s} px</option>)}
+                </select>
+              </Field>
+            </Section>
+
+            <Section title="Placement" step={3} id="ps-place">
               <Field label="Spawn name" hint="Used in scripts: CreateObject(`name`, ...)">
                 <input value={name} onChange={e => setName(safeName(e.target.value, ''))} />
               </Field>
@@ -341,7 +425,7 @@ export function PropStudio({ mode }: { mode: Mode }) {
               </Field>
             </Section>
 
-            <Section title="Collision">
+            <Section title="Collision" step={4} id="ps-collision">
               <div className="seg">
                 {(['none', 'box', 'mesh'] as CollisionMode[]).map(c => (
                   <button key={c} className={collision === c ? 'on' : ''} onClick={() => setCollision(c)}>{c === 'none' ? 'None' : c === 'box' ? 'Box' : 'Precise'}</button>
@@ -357,7 +441,7 @@ export function PropStudio({ mode }: { mode: Mode }) {
               )}
             </Section>
 
-            <Section title="Streaming">
+            <Section title="Streaming" id="ps-stream">
               <Field label={`Draw distance: ${lodDist} m`}>
                 <input type="range" min={20} max={600} step={10} value={lodDist} onChange={e => setLodDist(+e.target.value)} />
               </Field>
@@ -402,7 +486,7 @@ export function PropStudio({ mode }: { mode: Mode }) {
 
             {isAnimator && (
               <>
-                <Section title="Moving parts" right={<span className="muted small">{parts.length} selected</span>}>
+                <Section title="Moving parts" step={5} id="ps-parts" right={<span className="muted small">{parts.length} selected</span>}>
                   <p className="muted small">Tick the parts that move (lid, door, fan blade). Each becomes a bone.</p>
                   <div className="tree">
                     {meshNodes.map(({ node, depth }) => (
@@ -470,7 +554,7 @@ export function PropStudio({ mode }: { mode: Mode }) {
               </>
             )}
 
-            <Section title="Export">
+            <Section title="Export" step={isAnimator ? 6 : 5} id="ps-export">
               <button className="btn btn-primary btn-wide" disabled={busy || !name} onClick={build}>
                 {busy ? 'Building…' : 'Build FiveM resource'}
               </button>
