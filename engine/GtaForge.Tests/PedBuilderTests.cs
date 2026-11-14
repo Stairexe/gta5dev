@@ -137,3 +137,20 @@ public class PedBuilderTests
         Assert.Contains(result.Report.Warnings, w => w.Contains("skeleton-only .yft"));
     }
 }
+
+public class FixtureWriter
+{
+    /// <summary>Writes the synthetic ped (.ydd + .ytd) to GF_FIXTURE_DIR for browser tests. No-op otherwise.</summary>
+    [Fact]
+    public void Write_synthetic_ped_fixture_when_requested()
+    {
+        var dir = Environment.GetEnvironmentVariable("GF_FIXTURE_DIR");
+        if (string.IsNullOrEmpty(dir)) return;
+        Directory.CreateDirectory(dir);
+        File.WriteAllBytes(Path.Combine(dir, "test_body.ydd"), PedBuilderTests.SyntheticPedYdd());
+        var png = TextureWriter.SolidRgbaPng(200, 150, 120);
+        File.WriteAllBytes(Path.Combine(dir, "test_body.ytd"), TextureWriter.BuildYtd(
+            [new("body_diff", png, TextureKind.Diffuse), new("body_nrm", png, TextureKind.Normal), new("body_spec", png, TextureKind.Specular)],
+            Directory.CreateTempSubdirectory("gf_fx_").FullName));
+    }
+}
