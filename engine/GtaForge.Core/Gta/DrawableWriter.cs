@@ -1,7 +1,7 @@
 using System.Globalization;
 using System.Numerics;
 
-namespace GtaForge.Engine.Gta;
+namespace GtaForge.Core.Gta;
 
 /// <summary>Writes a CodeWalker drawable XML (.ydr.xml) from the neutral scene model.</summary>
 public sealed class DrawableWriter

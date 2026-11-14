@@ -1,6 +1,6 @@
 using System.Numerics;
 
-namespace GtaForge.Engine.Gta;
+namespace GtaForge.Core.Gta;
 
 /// <summary>
 /// Shader presets for props. Parameter lists and defaults follow the vanilla shader

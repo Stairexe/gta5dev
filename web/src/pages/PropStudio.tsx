@@ -280,6 +280,7 @@ export function PropStudio({ mode }: { mode: Mode }) {
       setResult(r);
       download(r.blob, r.fileName);
     } catch (e) {
+      console.error(e);
       setBuildError((e as Error).message);
     } finally {
       setBusy(false);

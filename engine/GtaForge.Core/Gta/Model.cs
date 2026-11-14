@@ -1,6 +1,6 @@
 using System.Numerics;
 
-namespace GtaForge.Engine.Gta;
+namespace GtaForge.Core.Gta;
 
 // Neutral, GTA-axis (Z-up) scene description that the writers turn into CodeWalker XML.
 // The browser converts glTF (Y-up) into this space before upload.

@@ -1,6 +1,6 @@
 using System.Numerics;
 
-namespace GtaForge.Engine.Gta;
+namespace GtaForge.Core.Gta;
 
 public static class MeshOps
 {

@@ -2,7 +2,7 @@ using System.Globalization;
 using System.Numerics;
 using System.Xml;
 
-namespace GtaForge.Engine.Peds;
+namespace GtaForge.Core.Peds;
 
 /// <summary>
 /// Splits the drawables of a full-body ped .ydd (CodeWalker XML) into head / uppr / lowr / feet

@@ -1,6 +1,7 @@
 import { useEffect, useState } from 'react';
 import { PropStudio } from './pages/PropStudio';
 import { PedTool } from './pages/PedTool';
+import { loadEngine } from './lib/engine';
 
 type Route = 'home' | 'props' | 'animator' | 'ped';
 
@@ -17,6 +18,8 @@ function readRoute(): Route {
 
 export function App() {
   const [route, setRoute] = useState<Route>(readRoute);
+  // Start downloading the in-browser engine as soon as a tool is opened.
+  useEffect(() => { if (route !== 'home') void loadEngine().catch(() => undefined); }, [route]);
   useEffect(() => {
     const on = () => setRoute(readRoute());
     window.addEventListener('hashchange', on);
@@ -44,7 +47,7 @@ function Home() {
     <div className="home">
       <header className="hero">
         <h1>From 3D model to FiveM resource.</h1>
-        <p>Build GTA V props, animated props and addon peds in your browser. Every file is compiled with CodeWalker's format engine and read back before you download it.</p>
+        <p>Build GTA V props, animated props and addon peds in your browser. Every file is compiled on your own machine with CodeWalker's format engine (running as WebAssembly) and read back before you download it. Nothing is uploaded.</p>
       </header>
       <div className="cards">
         {TOOLS.map(t => (

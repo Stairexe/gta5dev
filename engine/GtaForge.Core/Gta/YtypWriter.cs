@@ -1,4 +1,4 @@
-namespace GtaForge.Engine.Gta;
+namespace GtaForge.Core.Gta;
 
 /// <summary>Archetype flags (CBaseArchetypeDef.flags).</summary>
 [Flags]

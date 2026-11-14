@@ -10,8 +10,11 @@ Browser tools that turn 3D models into ready-to-install GTA V / FiveM resources.
 
 ## How it works
 
+Everything runs in the visitor's browser. The format engine (.NET 8 + CodeWalker.Core) is compiled
+to WebAssembly, so the site is fully static and no model is ever uploaded.
+
 ```
-browser (React + three.js)                       engine (.NET 8 + CodeWalker.Core)
+UI (React + three.js)                            engine (.NET 8 + CodeWalker.Core, WebAssembly)
 -------------------------------------------      ------------------------------------------------
 GLB -> scene -> GTA space (Z-up, metres)         request JSON -> CodeWalker XML -> binary RAGE files
 pivot, scale, LODs (meshoptimizer),       --->   DDS textures (BCnEncoder), collision, archetype,
@@ -19,11 +22,15 @@ collision mesh, textures, moving parts,          clips, ped split, variation .ym
 animation sampled per frame                      every file is read back before it is zipped
 ```
 
+Projects: `engine/GtaForge.Core` (all builders), `engine/GtaForge.Wasm` (JavaScript bridge, published
+into `web/public/engine`), `engine/GtaForge.Engine` (optional HTTP server exposing the same builders),
+`engine/GtaForge.Tests`, `web/` (the UI).
+
 * The browser does all editing and preview. It converts glTF (Y-up) to GTA space (Z-up),
   places the origin, simplifies LODs and collision with meshoptimizer, flips normal-map green for
   DirectX, derives spec maps from roughness, and samples animations at 30 fps into bone-local
   transforms.
-* The engine (`engine/GtaForge.Engine`) writes CodeWalker XML and compiles it with the vendored
+* The engine (`engine/GtaForge.Core`) writes CodeWalker XML and compiles it with the vendored
   [CodeWalker.Core](https://github.com/dexyfex/CodeWalker) (MIT). After building, it loads every
   file again and checks it (vertex counts, shaders, textures, archetype name and flags, clip and
   animation maps). A file that does not read back fails the build instead of shipping.
@@ -48,12 +55,14 @@ animation sampled per frame                      every file is read back before 
 Requirements: .NET 8 SDK, Node 18+.
 
 ```bash
-cd web && npm install && npm run build      # builds into engine/GtaForge.Engine/wwwroot
-cd ../engine/GtaForge.Engine && dotnet run  # http://localhost:5080
+scripts/build-static.sh        # WebAssembly engine + UI -> web/dist (a static site)
+cd web/dist && python3 -m http.server 8080
 ```
 
-For front-end work run `dotnet run` in `engine/GtaForge.Engine` with `ASPNETCORE_URLS=http://localhost:5080`
-and `npm run dev` in `web/` (Vite proxies `/api`).
+Any static host works (Vercel, Netlify, GitHub Pages, nginx). On Vercel, set the build command to
+`bash scripts/vercel-build.sh` (it installs the .NET SDK first) and the output directory to `web/dist`.
+
+For UI work: run `scripts/build-static.sh` once (it fills `web/public/engine`), then `npm run dev` in `web/`.
 
 Tests:
 

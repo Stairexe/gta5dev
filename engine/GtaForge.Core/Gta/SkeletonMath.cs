@@ -3,7 +3,7 @@ using System.Numerics;
 using System.Text;
 using CodeWalker.GameFiles;
 
-namespace GtaForge.Engine.Gta;
+namespace GtaForge.Core.Gta;
 
 public static class SkeletonMath
 {

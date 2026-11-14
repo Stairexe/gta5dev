@@ -1,6 +1,6 @@
 using System.IO.Compression;
 using System.Numerics;
-using GtaForge.Engine.Gta;
+using GtaForge.Core.Gta;
 
 namespace GtaForge.Tests;
 
@@ -21,7 +21,7 @@ public class E2EOutputChecks
         Assert.Equal(0.3f, bones[1].Translation.Y, 0.01f);
         Assert.Equal(0.6f, bones[1].Translation.Z, 0.01f);
         // Lid vertices in bone space + bone translation = object space: lid spans y -0.3..0.3, z 0.6..0.72.
-        var preview = Engine.Inspect.Inspector.Inspect("c.ydr", Read("gf_chest/stream/gf_chest.ydr"));
+        var preview = Core.Inspect.Inspector.Inspect("c.ydr", Read("gf_chest/stream/gf_chest.ydr"));
         var lidMesh = preview.Meshes[1];
         var t = new Vector3(bones[1].Translation.X, bones[1].Translation.Y, bones[1].Translation.Z);
         float minY = float.MaxValue, maxY = float.MinValue, minZ = float.MaxValue, maxZ = float.MinValue;

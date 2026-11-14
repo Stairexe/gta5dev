@@ -1,9 +1,9 @@
 using System.IO.Compression;
 using System.Numerics;
 using CodeWalker.GameFiles;
-using GtaForge.Engine.Gta;
-using GtaForge.Engine.Peds;
-using GtaForge.Engine.Props;
+using GtaForge.Core.Gta;
+using GtaForge.Core.Peds;
+using GtaForge.Core.Props;
 
 namespace GtaForge.Tests;
 
@@ -32,9 +32,9 @@ public class PedBuilderTests
         {
             var cube = PropBuilderTests.Cube(size, at);
             int b = pos.Count;
-            pos.AddRange(Engine.Props.RequestMapping.V3(cube.Positions));
-            nrm.AddRange(Engine.Props.RequestMapping.V3(cube.Normals!));
-            uv.AddRange(Engine.Props.RequestMapping.V2(cube.Uv0!));
+            pos.AddRange(Core.Props.RequestMapping.V3(cube.Positions));
+            nrm.AddRange(Core.Props.RequestMapping.V3(cube.Normals!));
+            uv.AddRange(Core.Props.RequestMapping.V2(cube.Uv0!));
             idx.AddRange(cube.Indices.Select(i => i + b));
             byte bIndex = (byte)Array.IndexOf(BoneNames, bone);
             for (int v = 0; v < cube.Positions.Length / 3; v++) { bi.AddRange([bIndex, 0, 0, 0]); bw.AddRange([255, 0, 0, 0]); }

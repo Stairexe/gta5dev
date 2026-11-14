@@ -3,7 +3,7 @@ using System.Numerics;
 using System.Security;
 using System.Text;
 
-namespace GtaForge.Engine.Gta;
+namespace GtaForge.Core.Gta;
 
 /// <summary>Tiny indented XML writer producing CodeWalker-style XML.</summary>
 public sealed class Xw

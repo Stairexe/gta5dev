@@ -1,6 +1,6 @@
-using GtaForge.Engine.Gta;
+using GtaForge.Core.Gta;
 
-namespace GtaForge.Engine.Peds;
+namespace GtaForge.Core.Peds;
 
 public sealed record PedDrawable(PedComponents.Comp Comp, int Index, int TextureCount);
 

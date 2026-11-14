@@ -5,11 +5,11 @@ using System.Text.RegularExpressions;
 using System.Xml;
 using CodeWalker.GameFiles;
 using CodeWalker.Utils;
-using GtaForge.Engine.Gta;
-using GtaForge.Engine.Packaging;
-using GtaForge.Engine.Props;
+using GtaForge.Core.Gta;
+using GtaForge.Core.Packaging;
+using GtaForge.Core.Props;
 
-namespace GtaForge.Engine.Peds;
+namespace GtaForge.Core.Peds;
 
 public sealed record PedBuildResult(ResourceZip Resource, BuildReport Report);
 

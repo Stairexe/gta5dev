@@ -1,7 +1,7 @@
 using System.IO.Compression;
 using System.Text;
 
-namespace GtaForge.Engine.Packaging;
+namespace GtaForge.Core.Packaging;
 
 /// <summary>Collects the files of a FiveM resource and zips them under a root folder.</summary>
 public sealed class ResourceZip(string resourceName)

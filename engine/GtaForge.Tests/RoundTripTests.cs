@@ -1,5 +1,5 @@
 using CodeWalker.GameFiles;
-using GtaForge.Engine.Gta;
+using GtaForge.Core.Gta;
 
 namespace GtaForge.Tests;
 

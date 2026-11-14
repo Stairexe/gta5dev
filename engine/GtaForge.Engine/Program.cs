@@ -1,9 +1,9 @@
 using System.Text;
 using System.Text.Json;
-using GtaForge.Engine.Gta;
-using GtaForge.Engine.Inspect;
-using GtaForge.Engine.Peds;
-using GtaForge.Engine.Props;
+using GtaForge.Core.Gta;
+using GtaForge.Core.Inspect;
+using GtaForge.Core.Peds;
+using GtaForge.Core.Props;
 using Microsoft.AspNetCore.Http.Features;
 using Microsoft.AspNetCore.Server.Kestrel.Core;
 

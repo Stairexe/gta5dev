@@ -1,5 +1,5 @@
-using GtaForge.Engine.Gta;
-using GtaForge.Engine.Inspect;
+using GtaForge.Core.Gta;
+using GtaForge.Core.Inspect;
 
 namespace GtaForge.Tests;
 

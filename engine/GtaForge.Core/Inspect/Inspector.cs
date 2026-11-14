@@ -2,9 +2,9 @@ using System.Globalization;
 using System.Xml;
 using CodeWalker.GameFiles;
 using CodeWalker.Utils;
-using GtaForge.Engine.Gta;
+using GtaForge.Core.Gta;
 
-namespace GtaForge.Engine.Inspect;
+namespace GtaForge.Core.Inspect;
 
 /// <summary>Turns a compiled .ydr/.ydd/.yft (+ optional .ytd) into JSON meshes for the browser viewer.</summary>
 public static class Inspector

@@ -1,7 +1,7 @@
 using System.Xml;
 using CodeWalker.GameFiles;
 
-namespace GtaForge.Engine.Gta;
+namespace GtaForge.Core.Gta;
 
 /// <summary>
 /// Thin wrapper over CodeWalker.Core for loading compiled RAGE resources from raw bytes

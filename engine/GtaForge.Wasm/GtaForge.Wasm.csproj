@@ -1,0 +1,23 @@
+<Project Sdk="Microsoft.NET.Sdk.WebAssembly">
+  <!-- The format engine compiled to WebAssembly: the static site builds every file in the user's browser. -->
+  <PropertyGroup>
+    <TargetFramework>net8.0</TargetFramework>
+    <OutputType>Exe</OutputType>
+    <AllowUnsafeBlocks>true</AllowUnsafeBlocks>
+    <Nullable>enable</Nullable>
+    <NoWarn>$(NoWarn);CA1416</NoWarn>
+    <ImplicitUsings>enable</ImplicitUsings>
+    <InvariantGlobalization>true</InvariantGlobalization>
+    <!-- Trim only framework assemblies; CodeWalker and our code read XML through reflection, so they stay whole. -->
+    <PublishTrimmed>true</PublishTrimmed>
+    <TrimMode>partial</TrimMode>
+    <JsonSerializerIsReflectionEnabledByDefault>true</JsonSerializerIsReflectionEnabledByDefault>
+    <SuppressTrimAnalysisWarnings>true</SuppressTrimAnalysisWarnings>
+    <WasmEnableWebcil>true</WasmEnableWebcil>
+    <CompressionEnabled>false</CompressionEnabled>
+    <DebugType>none</DebugType>
+  </PropertyGroup>
+  <ItemGroup>
+    <ProjectReference Include="../GtaForge.Core/GtaForge.Core.csproj" />
+  </ItemGroup>
+</Project>

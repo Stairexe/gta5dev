@@ -2,7 +2,7 @@ using System.IO.Compression;
 using System.IO.Hashing;
 using System.Text;
 
-namespace GtaForge.Engine.Gta;
+namespace GtaForge.Core.Gta;
 
 /// <summary>Minimal RGBA8 PNG encoder (no dependencies).</summary>
 public static class Png

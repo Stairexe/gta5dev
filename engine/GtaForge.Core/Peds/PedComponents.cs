@@ -1,4 +1,4 @@
-namespace GtaForge.Engine.Peds;
+namespace GtaForge.Core.Peds;
 
 /// <summary>The 12 ped variation components, in ePedVarComp order.</summary>
 public static class PedComponents

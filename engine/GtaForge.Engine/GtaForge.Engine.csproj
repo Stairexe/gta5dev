@@ -1,13 +1,10 @@
 <Project Sdk="Microsoft.NET.Sdk.Web">
 
   <ItemGroup>
-    <ProjectReference Include="..\vendor\CodeWalker.Core\CodeWalker.Core.csproj" />
   </ItemGroup>
 
   <ItemGroup>
-    <PackageReference Include="BCnEncoder.Net" Version="2.3.0" />
-    <PackageReference Include="StbImageSharp" Version="2.30.16" />
-    <PackageReference Include="System.IO.Hashing" Version="11.0.0" />
+    <ProjectReference Include="..\GtaForge.Core\GtaForge.Core.csproj" />
   </ItemGroup>
 
   <PropertyGroup>

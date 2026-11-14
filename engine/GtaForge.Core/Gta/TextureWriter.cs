@@ -2,7 +2,7 @@ using BCnEncoder.Encoder;
 using BCnEncoder.Shared;
 using StbImageSharp;
 
-namespace GtaForge.Engine.Gta;
+namespace GtaForge.Core.Gta;
 
 public enum TextureKind { Diffuse, Normal, Specular }
 

@@ -1,9 +1,9 @@
 using System.Numerics;
 using System.Text.RegularExpressions;
-using GtaForge.Engine.Gta;
-using GtaForge.Engine.Packaging;
+using GtaForge.Core.Gta;
+using GtaForge.Core.Packaging;
 
-namespace GtaForge.Engine.Props;
+namespace GtaForge.Core.Props;
 
 public sealed record BuildReport(List<string> Checks, List<string> Warnings);
 

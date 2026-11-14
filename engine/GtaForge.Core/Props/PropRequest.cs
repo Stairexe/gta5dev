@@ -1,7 +1,7 @@
 using System.Numerics;
-using GtaForge.Engine.Gta;
+using GtaForge.Core.Gta;
 
-namespace GtaForge.Engine.Props;
+namespace GtaForge.Core.Props;
 
 // JSON contract sent by the browser. Geometry is already in GTA space (Z-up, metres),
 // flattened into plain arrays to keep the payload compact.

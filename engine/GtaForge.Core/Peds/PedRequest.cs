@@ -1,4 +1,4 @@
-namespace GtaForge.Engine.Peds;
+namespace GtaForge.Core.Peds;
 
 public sealed class PedRequest
 {

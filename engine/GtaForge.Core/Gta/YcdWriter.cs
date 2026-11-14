@@ -1,6 +1,6 @@
 using System.Numerics;
 
-namespace GtaForge.Engine.Gta;
+namespace GtaForge.Core.Gta;
 
 /// <summary>
 /// Writes a clip dictionary (.ycd) for prop skeleton animations: one clip per animation,

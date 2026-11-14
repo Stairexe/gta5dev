@@ -1,7 +1,7 @@
 using System.IO.Compression;
 using System.Numerics;
-using GtaForge.Engine.Gta;
-using GtaForge.Engine.Props;
+using GtaForge.Core.Gta;
+using GtaForge.Core.Props;
 
 namespace GtaForge.Tests;
 
@@ -145,7 +145,7 @@ public class AnimationDecodeTests
             rots.AddRange([q.X, q.Y, q.Z, q.W]);
         }
         var bones = new List<GBone> { new() { Name = "root" }, new() { Name = "lid", Parent = 0 } };
-        var anim = new GAnimation { Name = "open", FrameCount = frames, Duration = 1f, Tracks = [new GTrack { Bone = 1, Rotations = Engine.Props.RequestMapping.Q(rots.ToArray()) }] };
+        var anim = new GAnimation { Name = "open", FrameCount = frames, Duration = 1f, Tracks = [new GTrack { Bone = 1, Rotations = Core.Props.RequestMapping.Q(rots.ToArray()) }] };
         var ycd = GtaIO.LoadYcd(YcdWriter.Build(bones, [anim]));
         var xml = CodeWalker.GameFiles.YcdXml.GetXml(ycd);
         // Last frame of the w channel must be cos(45deg) = 0.7071 and x = -0.7071.

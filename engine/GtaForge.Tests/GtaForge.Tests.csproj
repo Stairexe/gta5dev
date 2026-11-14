@@ -24,6 +24,7 @@
 
   <ItemGroup>
     <ProjectReference Include="..\GtaForge.Engine\GtaForge.Engine.csproj" />
+    <ProjectReference Include="..\GtaForge.Core\GtaForge.Core.csproj" />
   </ItemGroup>
 
   <ItemGroup>
