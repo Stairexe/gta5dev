@@ -1,0 +1,39 @@
+﻿
+Microsoft Visual Studio Solution File, Format Version 12.00
+# Visual Studio Version 17
+VisualStudioVersion = 17.0.31903.59
+MinimumVisualStudioVersion = 10.0.40219.1
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "GtaForge.Engine", "GtaForge.Engine\GtaForge.Engine.csproj", "{744E1C1D-F4D2-4D77-A32C-3F84F3A6433F}"
+EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "GtaForge.Tests", "GtaForge.Tests\GtaForge.Tests.csproj", "{CA3FFF41-1F07-4FE9-AC85-8C66782E7692}"
+EndProject
+Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "vendor", "vendor", "{271E3171-BD9B-40AE-B1A6-C454C9C96B43}"
+EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "CodeWalker.Core", "vendor\CodeWalker.Core\CodeWalker.Core.csproj", "{8CC26999-75FD-4CC3-89D6-50DA769ED488}"
+EndProject
+Global
+	GlobalSection(SolutionConfigurationPlatforms) = preSolution
+		Debug|Any CPU = Debug|Any CPU
+		Release|Any CPU = Release|Any CPU
+	EndGlobalSection
+	GlobalSection(SolutionProperties) = preSolution
+		HideSolutionNode = FALSE
+	EndGlobalSection
+	GlobalSection(ProjectConfigurationPlatforms) = postSolution
+		{744E1C1D-F4D2-4D77-A32C-3F84F3A6433F}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{744E1C1D-F4D2-4D77-A32C-3F84F3A6433F}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{744E1C1D-F4D2-4D77-A32C-3F84F3A6433F}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{744E1C1D-F4D2-4D77-A32C-3F84F3A6433F}.Release|Any CPU.Build.0 = Release|Any CPU
+		{CA3FFF41-1F07-4FE9-AC85-8C66782E7692}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{CA3FFF41-1F07-4FE9-AC85-8C66782E7692}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{CA3FFF41-1F07-4FE9-AC85-8C66782E7692}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{CA3FFF41-1F07-4FE9-AC85-8C66782E7692}.Release|Any CPU.Build.0 = Release|Any CPU
+		{8CC26999-75FD-4CC3-89D6-50DA769ED488}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{8CC26999-75FD-4CC3-89D6-50DA769ED488}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{8CC26999-75FD-4CC3-89D6-50DA769ED488}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{8CC26999-75FD-4CC3-89D6-50DA769ED488}.Release|Any CPU.Build.0 = Release|Any CPU
+	EndGlobalSection
+	GlobalSection(NestedProjects) = preSolution
+		{8CC26999-75FD-4CC3-89D6-50DA769ED488} = {271E3171-BD9B-40AE-B1A6-C454C9C96B43}
+	EndGlobalSection
+EndGlobal
